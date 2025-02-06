@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template, abort, redirect
+import os
+
+from flask import Flask, request, render_template, abort, redirect, send_file
 from flask_simplelogin import SimpleLogin, login_required
 from os import environ as env
 
@@ -33,3 +35,17 @@ def update_profile():
         print('Got file')
         request.files['photo'].save(f"photos/{request.files['photo'].filename}")  # Vulnerable!
         return redirect("/")
+
+
+@app.route("/get_photo", methods=["GET"])
+def get_photo():
+    photo_filename = request.args.get("file")
+    if not photo_filename:
+        print('No file arg')
+        abort(400)
+    elif not os.path.isfile(f"./photos/{photo_filename}"):
+        print('File not found')
+        abort(404)
+    else:
+        print('Got file')
+        return send_file(f"./photos/{photo_filename}")  # Vulnerable!
