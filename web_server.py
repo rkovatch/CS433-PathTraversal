@@ -51,12 +51,14 @@ def update_profile():
     first_name = request.form.get("fname", "")
     last_name = request.form.get("lname", "")
     print(f"Profile update for {get_username()} – First Name: {first_name}, Last Name: {last_name}")
+    os.makedirs("photos", exist_ok=True)
     request.files['photo'].save(f"photos/{request.files['photo'].filename}")  # Vulnerable!
     return redirect(url_for("shopping"))
 
 
 @app.route("/get_photo", methods=["GET"])
 def get_photo():
+    os.makedirs("photos", exist_ok=True)
     photo_filename = request.args.get("file")
     if not photo_filename:
         print('No file arg')
