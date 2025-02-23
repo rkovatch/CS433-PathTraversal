@@ -1,5 +1,98 @@
-<form action="/profile" method="post" enctype="multipart/form-data">
-        <label>Username: {{ get_username() }}</label><br/>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Demo App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script>
+    // This function shows the appropriate section based on the URL path.
+    function showSection() {
+      var path = window.location.pathname;
+      // Hide all sections by default.
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('shoppingSection').style.display = 'none';
+      document.getElementById('profileSection').style.display = 'none';
+      document.getElementById('navBar').style.display = 'none';
+      
+      // Remove duck background class from body.
+      document.body.classList.remove('duck-background');
+
+      if (path === '/' || path == '/login') {
+        // Show login section and add duck background.
+        document.getElementById('loginSection').style.display = 'block';
+        document.body.classList.add('duck-background');
+      } else if (path === '/shopping') {
+        // Show shopping section, show navigation bar, and add duck background.
+        document.getElementById('shoppingSection').style.display = 'block';
+        document.getElementById('navBar').style.display = 'block';
+        document.body.classList.add('duck-background');
+      } else if (path === '/profile_form') {
+        // Show profile update section with plain background.
+        document.getElementById('profileSection').style.display = 'block';
+        document.getElementById('navBar').style.display = 'block';
+        // Ensure background image is removed.
+        document.body.style.backgroundImage = '';
+        document.body.style.backgroundColor = "#f4f4f4";
+      } else {
+        // Default to login.
+        document.getElementById('loginSection').style.display = 'block';
+        document.body.classList.add('duck-background');
+      }
+    }
+    window.onload = showSection;
+  </script>
+</head>
+<body>
+  <!-- Navigation bar (shown only on logged-in pages) -->
+  <div id="navBar" style="display:none;">
+    <nav>
+      <ul>
+        <li><a href="/shopping">Shopping</a></li>
+        <li><a href="/profile_form">Update Info</a></li>
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container">
+    <!-- Login Section -->
+    <div id="loginSection" style="display:none;">
+      <h1>Login</h1>
+      <form method="post" action="/login">
+        <label>Username:
+          <input type="text" name="username">
+        </label>
+        <label>Password:
+          <input type="password" name="password">
+        </label>
+        <br><br>
+        <input type="submit" value="Login">
+      </form>
+      <p>Only the hardcoded accounts are allowed:</p>
+      <ul>
+        <li>admin / banana</li>
+        <li>bobby / hunter2</li>
+        <li>alice / passw0rd</li>
+      </ul>
+    </div>
+
+    <!-- Shopping Section -->
+    <div id="shoppingSection" style="display:none;">
+      <h1>Shopping Page</h1>
+      <p>Welcome, User!</p>
+      <ul>
+        <li>Product 1 – $10</li>
+        <li>Product 2 – $20</li>
+        <li>Product 3 – $30</li>
+      </ul>
+      <hr>
+    </div>
+
+    <!-- Profile Update Section -->
+    <div id="profileSection" style="display:none;">
+      <h1>Update User Info</h1>
+      <form method="post" action="/profile" enctype="multipart/form-data">
+        <label>Username: User</label><br>
         <label for="fname">First name:</label>
         <input type="text" id="fname" name="fname"><br><br>
         <label for="lname">Last name:</label>
@@ -7,4 +100,14 @@
         <label for="photo">Photo:</label>
         <input type="file" id="photo" name="photo"><br><br>
         <input type="submit" value="Submit">
-</form>
+      </form>
+      <hr>
+      <h2>View Your Uploaded Photo</h2>
+      <p>After uploading a photo, view it by navigating to:</p>
+      <pre>/get_photo?file=FILENAME</pre>
+      <p>(Replace FILENAME with the actual name of your uploaded file.)</p>
+      <p><a href="/shopping">Back to Shopping</a></p>
+    </div>
+  </div>
+</body>
+</html>

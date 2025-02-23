@@ -1,17 +1,23 @@
 import os
 
-from flask import Flask, request, render_template, abort, redirect, send_file
-from flask_simplelogin import SimpleLogin, login_required
+from flask import Flask, request, render_template, abort, redirect, send_file, url_for
+from flask_simplelogin import SimpleLogin, get_username, login_required
 from os import environ as env
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = env["SECRET_KEY"]
 
+# Hardcoded accounts (for demonstration only)
+accounts = {
+    "admin": "banana",
+    "bobby": "hunter2",
+    "alice": "passw0rd"
+}
 
 def authenticate(user: dict[str, str]) -> bool:
-    return (user["username"] == "admin" and user["password"] == "banana") or \
-           (user["username"] == "bobby" and user["password"] == "hunter2") or \
-           (user["username"] == "alice" and user["password"] == "passw0rd")
+    username = user.get("username", "")
+    password = user.get("password", "")
+    return accounts.get(username) == password
 
 
 SimpleLogin(app, login_checker=authenticate)
@@ -20,8 +26,17 @@ SimpleLogin(app, login_checker=authenticate)
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return redirect(url_for("shopping"))
 
+@app.route("/shopping")
+@login_required
+def shopping():
+    return render_template("index.html", page="shopping")
+
+@app.route("/profile_form")
+@login_required
+def profile_form():
+    return render_template("index.html", page="profile")
 
 @app.route("/profile", methods=["POST"])
 def update_profile():
@@ -31,10 +46,13 @@ def update_profile():
     elif request.files['photo'].filename == '':
         print('No selected file')
         abort(400)
-    else:
-        print('Got file')
-        request.files['photo'].save(f"photos/{request.files['photo'].filename}")  # Vulnerable!
-        return redirect("/")
+
+	# Log additional fields (first and last name) for demonstration.
+    first_name = request.form.get("fname", "")
+    last_name = request.form.get("lname", "")
+    print(f"Profile update for {get_username()} – First Name: {first_name}, Last Name: {last_name}")
+    request.files['photo'].save(f"photos/{request.files['photo'].filename}")  # Vulnerable!
+    return redirect(url_for("shopping"))
 
 
 @app.route("/get_photo", methods=["GET"])
@@ -46,6 +64,5 @@ def get_photo():
     elif not os.path.isfile(f"./photos/{photo_filename}"):
         print('File not found')
         abort(404)
-    else:
-        print('Got file')
-        return send_file(f"./photos/{photo_filename}")  # Vulnerable!
+    print('Serving file:', photo_filename)
+    return send_file(photo_path)
