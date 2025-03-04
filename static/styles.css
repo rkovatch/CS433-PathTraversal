@@ -1,47 +1,214 @@
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4; /* default background color */
-    }
-    /* Duck background class */
-    .duck-background {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Duck_cartoon.svg/1200px-Duck_cartoon.svg.png');
-      background-size: cover;
-      background-position: center;
-    }
-    .container {
-      padding: 2em;
-    }
-    form {
-      border: 1px solid #ccc;
-      padding: 1em;
-      margin-bottom: 1em;
-      background: white;
-    }
-    label {
-      display: block;
-      margin-top: 0.5em;
-    }
-    nav {
-      background-color: #333;
-      overflow: hidden;
-    }
-    nav ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-    nav ul li {
-      float: left;
-    }
-    nav ul li a {
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-    }
-    nav ul li a:hover {
-      background-color: #111;
-    }
+        /* Basic Reset and Body Styling */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333; /* Dark gray text */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 200px 1fr 300px; /* Sidebar, Main Feed, Trending */
+            grid-template-rows: auto 1fr auto; /* Header, Content, Footer */
+            grid-template-areas:
+                "header header header"
+                "sidebar main trending"
+                "footer footer footer";
+            max-width: 1200px; /* Maximum width for larger screens */
+            margin: 20px auto; /* Center the container */
+            gap: 20px; /* Spacing between grid areas */
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            grid-area: header;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end; /* Push profile to the right */
+            align-items: center;
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ccc; /* Placeholder image */
+            margin-left: 20px; /* Space from other header elements if any */
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Main Feed Styling */
+        .feed {
+            grid-area: main;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .post {
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post:last-child {
+            border-bottom: none; /* Remove border from the last post */
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ccc; /* Placeholder avatar */
+            margin-right: 10px;
+        }
+
+        .post-username {
+            font-weight: bold;
+        }
+
+        .post-time {
+            color: #777;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .post-content {
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .post-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            color: #777;
+        }
+
+        .post-actions span {
+            cursor: pointer;
+        }
+
+        .post-actions span:hover {
+            color: #333;
+        }
+
+
+        /* Trending Topics Styling */
+        .trending {
+            grid-area: trending;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .trending h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+        .trending-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .trending-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .trending-item a {
+            text-decoration: none;
+            color: #007bff; /* Example link color */
+            font-weight: bold;
+        }
+        .trending-item a:hover {
+            text-decoration: underline;
+        }
+
+        .trending-item span {
+            display: block;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+
+        /* Footer Styling */
+        footer {
+            grid-area: footer;
+            background-color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        /* Responsive adjustments (Optional - for smaller screens) */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr; /* Stack columns on smaller screens */
+                grid-template-areas:
+                    "header"
+                    "main"
+                    "trending"
+                    "sidebar"
+                    "footer";
+            }
+            .trending {
+                order: 2; /* Move trending below main on smaller screens */
+            }
+            .sidebar {
+                order: 3; /* Move sidebar below trending on smaller screens */
+            }
+        }
