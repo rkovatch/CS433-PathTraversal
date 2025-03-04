@@ -14,6 +14,7 @@ accounts = {
     "alice": "passw0rd"
 }
 
+
 def authenticate(user: dict[str, str]) -> bool:
     username = user.get("username", "")
     password = user.get("password", "")
@@ -26,17 +27,14 @@ SimpleLogin(app, login_checker=authenticate)
 @app.route("/")
 @login_required
 def index():
-    return redirect(url_for("shopping"))
+    return redirect(url_for("home_feed"))
 
-@app.route("/shopping")
-@login_required
-def shopping():
-    return render_template("index.html", page="shopping")
 
-@app.route("/profile_form")
+@app.route("/home")
 @login_required
-def profile_form():
-    return render_template("index.html", page="profile")
+def home_feed():
+    return render_template("index.html")
+
 
 @app.route("/profile", methods=["POST"])
 def update_profile():
@@ -47,7 +45,7 @@ def update_profile():
         print('No selected file')
         abort(400)
 
-	# Log additional fields (first and last name) for demonstration.
+    # Log additional fields (first and last name) for demonstration.
     first_name = request.form.get("fname", "")
     last_name = request.form.get("lname", "")
     print(f"Profile update for {get_username()} – First Name: {first_name}, Last Name: {last_name}")
@@ -67,4 +65,4 @@ def get_photo():
         print('File not found')
         abort(404)
     print('Serving file:', photo_filename)
-    return send_file(photo_path)
+    return send_file(photo_filename)
