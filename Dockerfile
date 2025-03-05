@@ -1,5 +1,6 @@
 FROM python:3.13-alpine
 LABEL maintainer="rkovatch@uoregon.edu"
+COPY database /database
 COPY static /static
 COPY templates /templates
 COPY photos /photos
