@@ -6,9 +6,9 @@ def seed_db():
     admin = User(username="admin", display_name="Addison Min", password_hash=hex(hash("banana")),
                  photo_filename="", is_admin=True)
     bobby = User(username="bobby", display_name="Bobby Tables", password_hash=hex(hash("hunter2")),
-                 photo_filename="", is_admin=True)
+                 photo_filename="", is_admin=False)
     alice = User(username="alice", display_name="Alice in Wonderland", password_hash=hex(hash("passw0rd")),
-                 photo_filename="", is_admin=True)
+                 photo_filename="", is_admin=False)
     for user in (admin, bobby, alice):
         user.save()
 
