@@ -17,6 +17,7 @@ libraries please. This page should be entirely static, i.e. there should be litt
 
     <div class="container">
         <header>
+            <span class="post-username">{{get_username()}}</span>
             <div class="profile-picture"></div>
         </header>
 
@@ -28,27 +29,33 @@ libraries please. This page should be entirely static, i.e. there should be litt
                 <li><a href="#">Messages</a></li>
                 <li><a href="#">Profile</a></li>
                 <li><a href="#">Settings</a></li>
+                <li><a href="/logout">Log out</a></li>
             </ul>
         </aside>
 
         <main class="feed">
+            {%for post in posts%}
             <div class="post">
                 <div class="post-header">
                     <div class="post-avatar"></div>
                     <div class="post-user-info">
-                        <span class="post-username">User Name One</span>
-                        <span class="post-time">5 minutes ago</span>
+                        <span class="post-username">{{post.author.display_name}}</span>
+                        <span class="post-time">{{post.date_posted.strftime('%d %b %Y')}}</span>
                     </div>
                 </div>
                 <div class="post-content">
-                    Just had a great coffee! ☕  Thinking about starting a new project. Any ideas? #coffee #projectideas #newbeginnings
+                    {{post.post_text}}
                 </div>
                 <div class="post-actions">
                     <span>Like</span>
                     <span>Comment</span>
                     <span>Share</span>
+                    {%if get_username() == post.author.username%}
+                    <span>Delete</span>
+                    {%endif%}
                 </div>
             </div>
+            {%endfor%}
 
             <div class="post">
                 <div class="post-header">

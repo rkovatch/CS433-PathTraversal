@@ -5,18 +5,23 @@ from flask_simplelogin import SimpleLogin, get_username, login_required
 from database.seeder import seed_db
 from database.models import *
 
+app = Flask(__name__)
+app.config["SECRET_KEY"] = env["SECRET_KEY"]
+
 
 def authenticate(user: dict[str, str]) -> bool:
-    return User.objects.get(username=user["username"]).password_hash == hex(hash(user["password"]))
+    try:
+        found_user = User.objects.get(username=user["username"])
+    except DoesNotExist:
+        return False
+    return found_user.password_hash == hex(hash(user["password"]))
 
+
+SimpleLogin(app, login_checker=authenticate)
 
 # Connect MongoEngine to mongodb
 connect(host=f"mongodb://{env['MONGODB_HOSTNAME']}:27017/socialdb")
 seed_db()
-
-app = Flask(__name__)
-app.config["SECRET_KEY"] = env["SECRET_KEY"]
-SimpleLogin(app, login_checker=authenticate)
 
 
 @app.route("/")
@@ -28,7 +33,7 @@ def index():
 @app.route("/home")
 @login_required
 def home_feed():
-    return render_template("index.html")
+    return render_template("index.html", posts=Post.objects)
 
 
 @app.route("/profile", methods=["POST"])
