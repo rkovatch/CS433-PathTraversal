@@ -1,0 +1,4 @@
+Flask~=3.1.0
+flask_simplelogin~=0.2.0
+requests~=2.32.3
+mongoengine~=0.29.1
