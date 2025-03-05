@@ -1,26 +1,21 @@
 import os
-
+from os import environ as env
 from flask import Flask, request, render_template, abort, redirect, send_file, url_for
 from flask_simplelogin import SimpleLogin, get_username, login_required
-from os import environ as env
-
-app = Flask(__name__)
-app.config["SECRET_KEY"] = env["SECRET_KEY"]
-
-# Hardcoded accounts (for demonstration only)
-accounts = {
-    "admin": "banana",
-    "bobby": "hunter2",
-    "alice": "passw0rd"
-}
+from database.seeder import seed_db
+from database.models import *
 
 
 def authenticate(user: dict[str, str]) -> bool:
-    username = user.get("username", "")
-    password = user.get("password", "")
-    return accounts.get(username) == password
+    return User.objects.get(username=user["username"]).password_hash == hex(hash(user["password"]))
 
 
+# Connect MongoEngine to mongodb
+connect(host=f"mongodb://{env['MONGODB_HOSTNAME']}:27017/socialdb")
+seed_db()
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = env["SECRET_KEY"]
 SimpleLogin(app, login_checker=authenticate)
 
 
