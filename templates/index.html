@@ -50,8 +50,13 @@ libraries please. This page should be entirely static, i.e. there should be litt
                     <span>Like</span>
                     <span>Comment</span>
                     <span>Share</span>
-                    {%if get_username() == post.author.username%}
-                    <span>Delete</span>
+                    {%if is_admin or get_username() == post.author.username%}
+                    <form id="delete-{{post.pk}}" action="/delete_post" method="post">
+                        <input type="hidden" id="post_id" name="post_id" value="{{post.pk}}">
+                        <span class="delete_btn" onclick="document.getElementById('delete-{{post.pk}}').submit()">
+                            Delete
+                        </span>
+                    </form>
                     {%endif%}
                 </div>
             </div>

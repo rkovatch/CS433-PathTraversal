@@ -21,7 +21,6 @@ SimpleLogin(app, login_checker=authenticate)
 
 # Connect MongoEngine to mongodb
 connect(host=f"mongodb://{env['MONGODB_HOSTNAME']}:27017/socialdb")
-seed_db()
 
 
 @app.route("/")
@@ -33,7 +32,26 @@ def index():
 @app.route("/home")
 @login_required
 def home_feed():
-    return render_template("index.html", posts=Post.objects)
+    if Post.objects.count() == 0:
+        seed_db()
+    return render_template("index.html", posts=Post.objects,
+                           is_admin=User.objects.get(username=get_username()).is_admin)
+
+
+@app.route("/delete_post", methods=["POST"])
+@login_required
+def delete_post():
+    post_id = request.form["post_id"]
+    try:
+        post_to_del = Post.objects.get(pk=post_id)
+    except DoesNotExist:
+        abort(404)
+
+    if post_to_del.author.username == get_username() or User.objects.get(username=get_username()).is_admin:
+        post_to_del.delete()
+        return redirect(url_for("home_feed"))
+    else:
+        abort(403)
 
 
 @app.route("/profile", methods=["POST"])
