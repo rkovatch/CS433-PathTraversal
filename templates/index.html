@@ -18,7 +18,7 @@ libraries please. This page should be entirely static, i.e. there should be litt
     <div class="container">
         <header>
             <span class="post-username">{{get_username()}}</span>
-            <div class="profile-picture"></div>
+            <img class="profile-picture" src="{{url_for('get_photo', file=current_user.photo_filename)}}">
         </header>
 
         <aside class="sidebar">
@@ -27,7 +27,7 @@ libraries please. This page should be entirely static, i.e. there should be litt
                 <li><a href="#">Explore</a></li>
                 <li><a href="#">Notifications</a></li>
                 <li><a href="#">Messages</a></li>
-                <li><a href="#">Profile</a></li>
+                <li><a href="#edit-profile">Profile</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="/logout">Log out</a></li>
             </ul>
@@ -37,7 +37,7 @@ libraries please. This page should be entirely static, i.e. there should be litt
             {%for post in posts%}
             <div class="post">
                 <div class="post-header">
-                    <div class="post-avatar"></div>
+                    <img class="post-avatar" src="{{url_for('get_photo', file=post.author.photo_filename)}}">
                     <div class="post-user-info">
                         <span class="post-username">{{post.author.display_name}}</span>
                         <span class="post-time">{{post.date_posted.strftime('%d %b %Y')}}</span>
@@ -50,7 +50,7 @@ libraries please. This page should be entirely static, i.e. there should be litt
                     <span>Like</span>
                     <span>Comment</span>
                     <span>Share</span>
-                    {%if is_admin or get_username() == post.author.username%}
+                    {%if current_user.is_admin or get_username() == post.author.username%}
                     <form id="delete-{{post.pk}}" action="/delete_post" method="post">
                         <input type="hidden" id="post_id" name="post_id" value="{{post.pk}}">
                         <span class="delete_btn" onclick="document.getElementById('delete-{{post.pk}}').submit()">
@@ -90,6 +90,34 @@ libraries please. This page should be entirely static, i.e. there should be litt
         <footer>
             Path Traversal Demo by Ryan Kovatch
         </footer>
+
+        <div id="edit-profile" class="modal-wrapper">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Profile</h2>
+                    <a href="#" class="modal-close-button">×</a>
+                </div>
+                <div class="modal-body">
+                    <form class="modal-form" id="profile-modal-form" action="/profile" method="post" enctype="multipart/form-data">
+                        <div>
+                            <label for="display_name">Display name:</label>
+                            <input type="text" id="display_name" name="display_name" value="{{current_user.display_name}}"
+                                   placeholder="Enter display name">
+                        </div>
+                        <div>
+                            <label for="photo">Profile photo:</label>
+                            <input type="file" id="photo" name="photo">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" form="profile-modal-form" class="modal-button modal-button-primary">
+                        Save Changes
+                    </button>
+                    <a href="#" class="modal-button modal-button-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
     </div>
 
 </body>

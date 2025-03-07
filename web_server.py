@@ -35,7 +35,7 @@ def home_feed():
     if Post.objects.count() == 0:
         seed_db()
     return render_template("index.html", posts=Post.objects,
-                           is_admin=User.objects.get(username=get_username()).is_admin)
+                           current_user=User.objects.get(username=get_username()))
 
 
 @app.route("/delete_post", methods=["POST"])
@@ -55,32 +55,31 @@ def delete_post():
 
 
 @app.route("/profile", methods=["POST"])
+@login_required
 def update_profile():
-    if 'photo' not in request.files:
-        print('No file part')
-        abort(400)
-    elif request.files['photo'].filename == '':
-        print('No selected file')
-        abort(400)
-
-    # Log additional fields (first and last name) for demonstration.
-    first_name = request.form.get("fname", "")
-    last_name = request.form.get("lname", "")
-    print(f"Profile update for {get_username()} – First Name: {first_name}, Last Name: {last_name}")
-    os.makedirs("photos", exist_ok=True)
-    request.files['photo'].save(f"photos/{request.files['photo'].filename}")  # Vulnerable!
-    return redirect(url_for("shopping"))
+    this_user = User.objects.get(username=get_username())
+    if request.form["display_name"] != this_user.display_name:
+        this_user.display_name = request.form["display_name"]
+        this_user.save()
+    if "photo" in request.files:
+        photo_file = request.files["photo"]
+        os.makedirs("photos", exist_ok=True)
+        photo_file.save(f"./photos/{photo_file.filename}")  # Vulnerable!
+        this_user.photo_filename = photo_file.filename
+        this_user.save()
+    return redirect(url_for("home_feed"))
 
 
 @app.route("/get_photo", methods=["GET"])
 def get_photo():
     os.makedirs("photos", exist_ok=True)
     photo_filename = request.args.get("file")
+    photo_path = f"./photos/{photo_filename}"  # Vulnerable!
     if not photo_filename:
         print('No file arg')
         abort(400)
-    elif not os.path.isfile(f"./photos/{photo_filename}"):
+    elif not os.path.isfile(photo_path):
         print('File not found')
         abort(404)
     print('Serving file:', photo_filename)
-    return send_file(photo_filename)
+    return send_file(photo_path)  # Vulnerable!
