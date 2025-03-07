@@ -21,7 +21,8 @@ SimpleLogin(app, login_checker=authenticate)
 
 # Connect MongoEngine to mongodb
 connect(host=f"mongodb://{env['MONGODB_HOSTNAME']}:27017/socialdb")
-
+if Post.objects.count() == 0:
+    seed_db()
 
 @app.route("/")
 @login_required
@@ -32,8 +33,6 @@ def index():
 @app.route("/home")
 @login_required
 def home_feed():
-    if Post.objects.count() == 0:
-        seed_db()
     return render_template("index.html", posts=Post.objects,
                            current_user=User.objects.get(username=get_username()))
 

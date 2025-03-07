@@ -1,21 +1,32 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<div class="container">
-    <!-- Login Section -->
-    <div id="loginSection" style="display:block;">
-      <h1>Login</h1>
-      <form method="post" action="{{ url_for('simplelogin.login', next=request.args.get('next', '/')) }}">
-		<div class="form-group">
-        {{ form.csrf_token }}
-        {{form.username.label}}<div class="form-control">{{ form.username }}</div><br>
-        {{form.password.label}}<div class="form-control"> {{ form.password }}</div><br>
-     	</div>
-        <br><br>
-        <input type="submit" value="Send">
-      </form>
-      <p>Only the hardcoded accounts are allowed:</p>
-      <ul>
-        <li>admin / banana</li>
-        <li>bobby / hunter2</li>
-        <li>alice / passw0rd</li>
-      </ul>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Path Traversal Demo</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+<body>
+    <main class="feed" style="background-color: transparent; box-shadow: none; padding: 0;">
+        <div class="login-container">
+            <h2>Path Traversal Demo</h2>
+            <form class="login-form" action="{{url_for('simplelogin.login')}}"
+                  method="post">
+                {{form.csrf_token}}
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                {% if next %}<input type="hidden" name="next" value="{{next}}">{% endif %}
+                <div>
+                    <button type="submit" class="login-button" value="Send">Log In</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
