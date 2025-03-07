@@ -45,7 +45,6 @@ def delete_post():
         post_to_del = Post.objects.get(pk=post_id)
     except DoesNotExist:
         abort(404)
-
     if post_to_del.author.username == get_username() or User.objects.get(username=get_username()).is_admin:
         post_to_del.delete()
         return redirect(url_for("home_feed"))
@@ -73,11 +72,11 @@ def update_profile():
 def get_photo():
     os.makedirs("photos", exist_ok=True)
     photo_filename = request.args.get("file")
-    photo_path = f"./photos/{photo_filename}"  # Vulnerable!
     if not photo_filename:
         print('No file arg')
         abort(400)
-    elif not os.path.isfile(photo_path):
+    photo_path = f"./photos/{photo_filename}"  # Vulnerable!
+    if not os.path.isfile(photo_path):
         print('File not found')
         abort(404)
     print('Serving file:', photo_filename)
