@@ -7,6 +7,7 @@ from database.models import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = env["SECRET_KEY"]
+app.config['SESSION_COOKIE_HTTPONLY'] = False  # disable XSS protection for demonstration purposes
 
 
 def authenticate(user: dict[str, str]) -> bool:
