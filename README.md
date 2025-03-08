@@ -10,9 +10,10 @@ fact not. This is an especially big risk when file paths are user-provided.
 This is a web application mimicking a social media site which contains a photo upload function that is vulnerable to
 path traversal. The goal is to demonstrate how simple of an exploit it is while also showing how grave of an impact it
 can have. Included is a Python script which exploits the path traversal vulnerability and injects a credential stealer 
-on the home page of the app (TODO).
+on the home page of the app.
 
 ## Usage
+### The web server
 The application is a multi-container setup orchestrated with Docker Compose. You can learn how to install that 
 [here](https://docs.docker.com/compose/install/). Before bringing up the app for the first time, we need to set a secret
 key in the environment that's used to compute login session keys: `export SECRET_KEY=<key goes here>`. Then you can run 
@@ -36,7 +37,21 @@ To read arbitrarily, a vulnerable `get_photo` API is provided. It is even simple
 http://localhost:5001/get_photo?file=../web_server.py. Now, with read and write privileges, we can make any number of 
 changes to the application's files remotely while it runs.
 
-TODO: credential stealer usage
+### The exploit
+The included exploit code in the `exploit` directory takes advantage of the path traversal vulnerabilities in our app 
+to inject arbitrary JavaScript code into the home feed -- in this case, a credential stealer. The exploit PoC is split
+into three parts:
+
+- `injector.py`: The injector script. Run this while the web server is up and running to replace the `index.html`
+template with a malicious one.
+- `credential_stealer.js`: The inject**ed** script. This is the JavaScript that will be injected into the `<head>` of
+the home feed by `injector.py`. On page load, it makes a POST request to the credential listener to exfiltrate the 
+user's `session` cookie.
+- `credential_listener.py`: A small Flask app that listens for POST requests on `/log_session` from the credential
+stealer and prints them.
+
+To run the full exploit chain, start the web server, then run `python injector.py && python credential_listener.py`.
+Session cookies will be logged every time a user loads the home feed.
 
 ## How can I prevent path traversal vulnerabilities?
 The best way is to not accept any user input at all when handling file paths. The vulnerability in this app would be
@@ -53,6 +68,6 @@ uploads. If file traversal were to happen on your CDN, it might only affect othe
 ## Attribution
 Google's experimental Gemini 2.0 Flash Thinking 01-21 model was used to generate static HTML templates and CSS 
 stylesheets to serve as a starting point for the project. Prompt information is available as comments in the HTML
-templates, which can be found in the `templates` folder. All functional parts, including the entire Flask web server and
-all of its components, are the authors' own work. Our use of the Netflix avatar constitutes fair use for educational
-purposes.
+templates, which can be found in the `templates` folder. All functional parts, including the entire web server and
+all of its components, are the authors' own work. Some JavaScript code was adapted from GeeksforGeeks; attribution is
+provided in comments where applicable. Our use of the Netflix avatar constitutes fair use for educational purposes.
